@@ -10,7 +10,7 @@
 
   URLが空の場合、ログイン・保存機能は利用できない。
 */
-const API_URL = "";
+const API_URL = "https://script.google.com/macros/s/AKfycbwDFvhnRXuvQIEB3wmtNPGyirPQ1pM4-aCudbipLo-OFky-sYLbU83tcHY_sFHxMMqrNw/exec";
 
 /* ---------- 設定 ---------- */
 

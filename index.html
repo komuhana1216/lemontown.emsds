@@ -1,0 +1,394 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b1220">
+  <title>EMS COMMAND | Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="favicon.ico">
+</head>
+<body>
+
+  <!-- ログイン画面 -->
+  <section id="loginScreen" class="login-screen">
+    <div class="login-card">
+      <div class="brand-symbol">
+        <span>✚</span>
+      </div>
+      <p class="eyebrow">EMERGENCY MEDICAL SERVICES</p>
+      <h1>EMS <span>COMMAND</span></h1>
+      <p class="login-description">
+        救急隊員専用管理システム
+      </p>
+
+      <form id="loginForm">
+        <label for="loginId">隊員ID</label>
+        <input
+          id="loginId"
+          type="text"
+          placeholder="例：EMS-001"
+          autocomplete="username"
+          maxlength="64"
+          required
+        >
+        <button class="btn btn-primary btn-full" type="submit">
+          ログイン <span>→</span>
+        </button>
+      </form>
+
+      <p id="loginMessage" class="message" role="status"></p>
+      <p class="login-footer">AUTHORIZED PERSONNEL ONLY</p>
+    </div>
+  </section>
+
+  <!-- メイン画面 -->
+  <div id="appScreen" class="app-shell hidden">
+
+    <aside id="sidebar" class="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-symbol small"><span>✚</span></div>
+        <div>
+          <strong>EMS COMMAND</strong>
+          <small>MEDICAL SERVICES</small>
+        </div>
+      </div>
+
+      <div class="nav-heading">MAIN MENU</div>
+
+      <button class="nav-item active" data-page="dashboard">
+        <span class="nav-icon">▦</span> ダッシュボード
+      </button>
+      <button class="nav-item" data-page="sales">
+        <span class="nav-icon">＋</span> 販売登録
+      </button>
+      <button class="nav-item" data-page="history">
+        <span class="nav-icon">◷</span> 販売履歴
+      </button>
+      <button class="nav-item hidden" id="notesNav" data-page="notes">
+        <span class="nav-icon">▤</span> 隊員活動メモ
+      </button>
+
+      <div class="sidebar-bottom">
+        <div class="connection-indicator">
+          <span class="status-dot"></span>
+          <span id="connectionStatus">接続待機中</span>
+        </div>
+        <button id="logoutButton" class="logout-button">
+          ↪ ログアウト
+        </button>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <button id="menuToggle" class="menu-toggle" aria-label="メニュー">☰</button>
+        <div>
+          <p class="eyebrow">EMS OPERATIONS</p>
+          <h2 id="pageTitle">ダッシュボード</h2>
+        </div>
+
+        <div class="profile">
+          <div class="profile-avatar">✚</div>
+          <div class="profile-info">
+            <strong id="profileName">---</strong>
+            <span id="profileRank">---</span>
+          </div>
+        </div>
+      </header>
+
+      <div id="globalMessage" class="global-message hidden" role="status"></div>
+
+      <!-- ダッシュボード -->
+      <section id="page-dashboard" class="page">
+        <div class="welcome-row">
+          <div>
+            <p class="eyebrow">COMMAND CENTER</p>
+            <h1>お疲れさまです。</h1>
+            <p class="muted">本日の救急隊活動状況を確認できます。</p>
+          </div>
+          <div class="date-card">
+            <span>本日の集計日</span>
+            <strong id="todayDate">----</strong>
+            <small>JAPAN STANDARD TIME</small>
+          </div>
+        </div>
+
+        <div class="section-heading">
+          <div>
+            <h3>本日の販売状況</h3>
+            <p class="muted">販売相手ごとの日次上限とは別に、全体の実績を表示します。</p>
+          </div>
+          <button id="refreshButton" class="btn btn-secondary">↻ 更新</button>
+        </div>
+
+        <div class="stats-grid">
+          <article class="stat-card">
+            <div class="stat-top">
+              <span class="stat-icon cyan">✚</span>
+              <span class="stat-label">BANDAGE</span>
+            </div>
+            <p class="stat-name">包帯</p>
+            <div class="stat-number"><strong id="bandageSold">0</strong><span>個</span></div>
+            <div class="progress-track">
+              <div id="bandageProgress" class="progress-fill"></div>
+            </div>
+            <p class="stat-foot">全隊員の本日合計 <span>上限 / 相手 30個</span></p>
+          </article>
+
+          <article class="stat-card">
+            <div class="stat-top">
+              <span class="stat-icon orange">＋</span>
+              <span class="stat-label">HEMOSTATIC</span>
+            </div>
+            <p class="stat-name">止血剤</p>
+            <div class="stat-number"><strong id="hemostaticSold">0</strong><span>個</span></div>
+            <div class="progress-track">
+              <div id="hemostaticProgress" class="progress-fill orange-fill"></div>
+            </div>
+            <p class="stat-foot">全隊員の本日合計 <span>上限 / 相手 20個</span></p>
+          </article>
+
+          <article class="stat-card">
+            <div class="stat-top">
+              <span class="stat-icon purple">＋</span>
+              <span class="stat-label">PAINKILLER</span>
+            </div>
+            <p class="stat-name">痛み止め剤</p>
+            <div class="stat-number"><strong id="painkillerSold">0</strong><span>個</span></div>
+            <div class="progress-track">
+              <div id="painkillerProgress" class="progress-fill purple-fill"></div>
+            </div>
+            <p class="stat-foot">全隊員の本日合計 <span>上限 / 相手 20個</span></p>
+          </article>
+        </div>
+
+        <div class="content-grid">
+          <article class="panel">
+            <div class="panel-heading">
+              <div>
+                <h3>最近の販売履歴</h3>
+                <p class="muted">最新の登録記録</p>
+              </div>
+              <button class="text-button" data-goto="history">すべて見る →</button>
+            </div>
+            <div id="recentSales" class="recent-list">
+              <div class="empty-state">データを読み込んでいます...</div>
+            </div>
+          </article>
+
+          <article class="panel quick-panel">
+            <div class="panel-heading">
+              <div>
+                <h3>QUICK ACTION</h3>
+                <p class="muted">よく使う機能</p>
+              </div>
+            </div>
+            <button class="quick-action" data-goto="sales">
+              <span class="quick-icon">＋</span>
+              <span><strong>販売を登録する</strong><small>医療アイテムの販売記録</small></span>
+              <span class="arrow">→</span>
+            </button>
+            <button class="quick-action" data-goto="history">
+              <span class="quick-icon">◷</span>
+              <span><strong>販売履歴を確認する</strong><small>過去の販売記録を確認</small></span>
+              <span class="arrow">→</span>
+            </button>
+            <button class="quick-action hidden" id="notesQuickAction" data-goto="notes">
+              <span class="quick-icon">▤</span>
+              <span><strong>隊員活動メモ</strong><small>隊員の活動記録を管理</small></span>
+              <span class="arrow">→</span>
+            </button>
+          </article>
+        </div>
+      </section>
+
+      <!-- 販売登録 -->
+      <section id="page-sales" class="page hidden">
+        <div class="page-intro">
+          <p class="eyebrow">SALES MANAGEMENT</p>
+          <h1>医療アイテム販売登録</h1>
+          <p class="muted">全ランクの隊員が利用できます。販売した内容を正確に記録してください。</p>
+        </div>
+
+        <div class="notice-box">
+          <span>ⓘ</span>
+          <p>1日の販売上限は販売相手ごとに判定されます。包帯30個、止血剤20個、痛み止め剤20個が上限です。</p>
+        </div>
+
+        <form id="salesForm" class="panel form-panel">
+          <div class="panel-heading">
+            <div>
+              <h3>販売内容</h3>
+              <p class="muted">販売相手と数量を入力してください。</p>
+            </div>
+            <span class="required-label">必須項目あり</span>
+          </div>
+
+          <div class="form-group">
+            <label for="recipient">販売相手の名前・ID <span class="required">*</span></label>
+            <input id="recipient" type="text" maxlength="100"
+              placeholder="例：市民名 / プレイヤーID" required>
+            <small>上限判定に使うため、同じ相手は毎回同じ表記で入力してください。</small>
+          </div>
+
+          <div class="item-grid">
+            <article class="item-card">
+              <div class="item-card-top">
+                <span class="item-symbol cyan">✚</span>
+                <span class="limit-badge">上限 30個 / 日</span>
+              </div>
+              <h4>包帯</h4>
+              <p>負傷箇所の保護・応急処置に使用する医療用品。</p>
+              <label for="saleBandage">今回の販売個数</label>
+              <select id="saleBandage" data-item="bandage"></select>
+            </article>
+
+            <article class="item-card">
+              <div class="item-card-top">
+                <span class="item-symbol orange">＋</span>
+                <span class="limit-badge">上限 20個 / 日</span>
+              </div>
+              <h4>止血剤</h4>
+              <p>出血への対処を目的としたゲーム内医療アイテム。</p>
+              <label for="saleHemostatic">今回の販売個数</label>
+              <select id="saleHemostatic" data-item="hemostatic"></select>
+            </article>
+
+            <article class="item-card">
+              <div class="item-card-top">
+                <span class="item-symbol purple">＋</span>
+                <span class="limit-badge">上限 20個 / 日</span>
+              </div>
+              <h4>痛み止め剤</h4>
+              <p>痛みの緩和を目的としたゲーム内医療アイテム。</p>
+              <label for="salePainkiller">今回の販売個数</label>
+              <select id="salePainkiller" data-item="painkiller"></select>
+            </article>
+          </div>
+
+          <div id="limitWarning" class="warning-box hidden" role="alert"></div>
+
+          <div class="form-summary">
+            <span>今回の合計販売個数</span>
+            <strong><span id="totalQuantity">0</span> 個</strong>
+          </div>
+
+          <div class="form-actions">
+            <button id="resetSalesButton" type="reset" class="btn btn-secondary">入力をクリア</button>
+            <button id="submitSalesButton" type="submit" class="btn btn-primary">
+              販売を登録する →
+            </button>
+          </div>
+          <p class="form-footnote">販売日時・登録隊員はサーバー側で記録します。</p>
+        </form>
+      </section>
+
+      <!-- 販売履歴 -->
+      <section id="page-history" class="page hidden">
+        <div class="page-intro">
+          <p class="eyebrow">SALES HISTORY</p>
+          <h1>販売履歴</h1>
+          <p class="muted">登録された販売記録を検索・確認できます。</p>
+        </div>
+
+        <div class="panel">
+          <div class="filter-bar">
+            <div class="form-group search-group">
+              <label for="historySearch">販売相手・隊員名で検索</label>
+              <input id="historySearch" type="search" placeholder="名前やIDを入力">
+            </div>
+            <div class="form-group">
+              <label for="historyPeriod">表示期間</label>
+              <select id="historyPeriod">
+                <option value="today">本日の履歴</option>
+                <option value="7">過去7日間</option>
+                <option value="30">過去30日間</option>
+                <option value="all">すべて</option>
+              </select>
+            </div>
+            <button id="historyRefreshButton" class="btn btn-secondary">↻ 更新</button>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>日時</th>
+                  <th>販売隊員</th>
+                  <th>販売相手</th>
+                  <th>包帯</th>
+                  <th>止血剤</th>
+                  <th>痛み止め</th>
+                </tr>
+              </thead>
+              <tbody id="historyTableBody">
+                <tr><td colspan="6" class="empty-state">データを読み込んでいます...</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p id="historyCount" class="table-footer">0件</p>
+        </div>
+      </section>
+
+      <!-- 活動メモ -->
+      <section id="page-notes" class="page hidden">
+        <div class="page-intro">
+          <p class="eyebrow">PERSONNEL MANAGEMENT</p>
+          <h1>隊員活動メモ</h1>
+          <p class="muted">副院長・院長専用の隊員活動記録です。</p>
+        </div>
+
+        <div class="notice-box">
+          <span>🔒</span>
+          <p>この機能は副院長・院長のみ利用できます。権限確認はサーバー側でも行います。</p>
+        </div>
+
+        <div class="content-grid notes-grid">
+          <form id="noteForm" class="panel form-panel">
+            <div class="panel-heading">
+              <h3 id="noteFormTitle">活動メモを作成</h3>
+            </div>
+            <input type="hidden" id="noteId">
+
+            <div class="form-group">
+              <label for="noteMemberId">対象隊員ID <span class="required">*</span></label>
+              <input id="noteMemberId" maxlength="64" placeholder="例：EMS-001" required>
+            </div>
+            <div class="form-group">
+              <label for="noteContent">活動メモ <span class="required">*</span></label>
+              <textarea id="noteContent" rows="7" maxlength="5000"
+                placeholder="活動内容・引き継ぎ事項などを入力" required></textarea>
+            </div>
+            <div class="form-actions">
+              <button type="reset" id="resetNoteButton" class="btn btn-secondary">クリア</button>
+              <button type="submit" class="btn btn-primary">メモを保存する</button>
+            </div>
+          </form>
+
+          <article class="panel">
+            <div class="panel-heading">
+              <div>
+                <h3>記録一覧</h3>
+                <p class="muted">登録済みの活動メモ</p>
+              </div>
+              <button id="notesRefreshButton" class="btn btn-secondary">↻</button>
+            </div>
+            <div id="notesList" class="notes-list">
+              <div class="empty-state">メモを読み込んでいます...</div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <footer class="app-footer">
+        <span>EMS COMMAND DASHBOARD</span>
+        <span>INTERNAL USE ONLY</span>
+      </footer>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
